@@ -236,7 +236,7 @@ At the moment requires build specifically for linux due to namespaces requiremen
 ```
 
 #### Requirements
-You will `rootfs` directory, for example minimal alpine will do:
+You will need `rootfs` directory, for example minimal alpine will do:
 - rootfs (http://dl-cdn.alpinelinux.org/alpine/v3.12/releases/x86_64/alpine-minirootfs-3.12.0-x86_64.tar.gz)
 #### Syntax
 ```
