@@ -41,8 +41,8 @@ rcli ssh -U root -H 192.168.1.N:22,192.168.1.N:22,192.168.1.N:22 -d run -c "id"
 
 #### Example
 
-```bash
-➜  rcli git:(master) ✗ ./rcli ssh -U root --hosts-file ~/Temp/hosts -d run -c "id"
+```
+rcli ssh -U root --hosts-file ~/Temp/hosts -d run -c "id"
            ___________________ .____    .___
 Welcome to \______   \_   ___ \|    |   |   |
             |       _/    \  \/|    |   |   |
@@ -116,7 +116,7 @@ ssh: handshake failed: read tcp 192.168.1.N:50087->192.168.1.N:22: read: connect
 
 Same 1,000 hosts, this time running an example script. It takes roughly around 40 seconds to finish.
 ```
-➜  rcli git:(master) ✗ ./rcli ssh -U root --hosts-file ~/Temp/hosts runscript -f script-examples/for_loop.sh
+rcli ssh -U root --hosts-file ~/Temp/hosts runscript -f script-examples/for_loop.sh
            ___________________ .____    .___
 Welcome to \______   \_   ___ \|    |   |   |
             |       _/    \  \/|    |   |   |
