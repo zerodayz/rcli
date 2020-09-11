@@ -30,9 +30,16 @@ Please if you have any idea on any improvements please do not hesitate to open a
 ### SSH
 Example of SSH execution against 1,000 hosts takes around 40 seconds.
 #### Syntax
+Example of hosts file:
+```
+192.168.1.N:22
+192.168.1.N:22
+192.168.1.N:22
+192.168.1.N:22
+```
 `--hosts-file`
 ```
-rcli ssh -U root --hosts-file ~/Temp/hosts -d run -c "id"
+rcli ssh -U root --hosts-file hosts -d run -c "id"
 ```
 or using `-H`
 ```
@@ -42,7 +49,7 @@ rcli ssh -U root -H 192.168.1.N:22,192.168.1.N:22,192.168.1.N:22 -d run -c "id"
 #### Example
 
 ```
-rcli ssh -U root --hosts-file ~/Temp/hosts -d run -c "id"
+rcli ssh -U root --hosts-file hosts -d run -c "id"
            ___________________ .____    .___
 Welcome to \______   \_   ___ \|    |   |   |
             |       _/    \  \/|    |   |   |
@@ -116,7 +123,7 @@ ssh: handshake failed: read tcp 192.168.1.N:50087->192.168.1.N:22: read: connect
 
 Same 1,000 hosts, this time running an example script. It takes roughly around 40 seconds to finish.
 ```
-rcli ssh -U root --hosts-file ~/Temp/hosts runscript -f script-examples/for_loop.sh
+rcli ssh -U root --hosts-file hosts runscript -f script-examples/for_loop.sh
            ___________________ .____    .___
 Welcome to \______   \_   ___ \|    |   |   |
             |       _/    \  \/|    |   |   |
@@ -237,7 +244,7 @@ rcli container run -c /bin/sh
 ```
 
 #### Example
-```bash
+```
 rcli container run -c /bin/sh
            ___________________ .____    .___
 Welcome to \______   \_   ___ \|    |   |   |
