@@ -236,16 +236,16 @@ At the moment requires build specifically for linux due to namespaces requiremen
 ```
 
 #### Requirements
-You will `rootfs` directory where `rcli` is executed from.
+You will `rootfs` directory, for example minimal alpine will do:
 - rootfs (http://dl-cdn.alpinelinux.org/alpine/v3.12/releases/x86_64/alpine-minirootfs-3.12.0-x86_64.tar.gz)
 #### Syntax
 ```
-rcli container run -c /bin/sh
+rcli container run -c /bin/sh -i rootfs
 ```
 
 #### Example
 ```
-rcli container run -c /bin/sh
+rcli container run -c /bin/sh -i rootfs
            ___________________ .____    .___
 Welcome to \______   \_   ___ \|    |   |   |
             |       _/    \  \/|    |   |   |
@@ -286,7 +286,7 @@ drwxr-xr-x   12 root     root           137 May 29 14:20 var
 proc on /proc type proc (rw,relatime)
 [root@container]# ps -elf
 PID   USER     TIME  COMMAND
-    1 root      0:00 /proc/self/exe container run fork -c /bin/sh
+    1 root      0:00 /proc/self/exe container run fork -c /bin/sh -i rootfs
     6 root      0:00 /bin/sh
    10 root      0:00 ps -elf
 [root@container]# ip a

@@ -12,43 +12,47 @@ import (
 	"syscall"
 )
 
-func SetUpNS() {
+func SetUpNS(rootfs string) {
+	_, err := os.Stat(rootfs)
+	if os.IsNotExist(err) {
+		log.Fatal("ERROR: rootfs directory doesn't exist.")
+	}
 	if err := unix.Sethostname([]byte("container")); err != nil {
-		log.Println("ERROR: Failed to set hostname.")
+		log.Println("ERROR: failed to set hostname.")
 		os.Exit(1)
 	}
-	if err := unix.Mount("proc", "rootfs/proc", "proc", 0, ""); err != nil {
-		log.Println("ERROR: Failed to mount proc.")
+	if err := unix.Mount("proc", rootfs + "/proc", "proc", 0, ""); err != nil {
+		log.Println("ERROR: failed to mount proc.")
 		os.Exit(1)
 	}
-	if err := unix.Mount("rootfs", "rootfs", "", unix.MS_BIND|unix.MS_REC, ""); err != nil {
-		log.Println("ERROR: Failed to mount rootfs.")
+	if err := unix.Mount(rootfs, rootfs, "", unix.MS_BIND|unix.MS_REC, ""); err != nil {
+		log.Println("ERROR: failed to mount rootfs.")
 		os.Exit(1)
 	}
-	if err := os.MkdirAll("rootfs/.old_root", 0700); err != nil {
-		log.Println("ERROR: Failed to create .old_root directory.")
+	if err := os.MkdirAll(rootfs + "/.old_root", 0700); err != nil {
+		log.Println("ERROR: failed to create .old_root directory.")
 		os.Exit(1)
 	}
-	if err := unix.PivotRoot("rootfs", "rootfs/.old_root"); err != nil {
-		log.Println("ERROR: Failed to pivot to new root.")
+	if err := unix.PivotRoot(rootfs, rootfs + "/.old_root"); err != nil {
+		log.Println("ERROR: failed to pivot to new root.")
 		os.Exit(1)
 	}
 	if err := unix.Chdir("/"); err != nil {
-		log.Println("ERROR: Failed to change dir to /.")
+		log.Println("ERROR: failed to change dir to /.")
 		os.Exit(1)
 	}
 	if err := unix.Unmount("/.old_root", unix.MNT_DETACH); err != nil {
-		log.Println("ERROR: Failed to unmount .old_root.")
+		log.Println("ERROR: failed to unmount .old_root.")
 		os.Exit(1)
 	}
 	if err := os.RemoveAll("/.old_root"); err != nil {
-		log.Println("ERROR: Failed to remove .old_root")
+		log.Println("ERROR: failed to remove .old_root")
 		os.Exit(1)
 	}
 }
 
-func Child(command string) {
-	SetUpNS()
+func Child(command, rootfs string) {
+	SetUpNS(rootfs)
 	var cmd *exec.Cmd
 
 	commandArgs := strings.Split(command, " ")
@@ -73,12 +77,18 @@ func Child(command string) {
 	unix.Unmount("/proc", 0)
 }
 
-func Run(command string) {
+func Run(command, image string) {
 	var cmd *exec.Cmd
 	if vars.Debug == true {
-		cmd = exec.Command("/proc/self/exe", append([]string{"container", "-d", "run", "fork", "-c"}, command)...)
+		cmd = exec.Command("/proc/self/exe",
+			append([]string{"container", "-d", "run", "fork",
+				"-i", image,
+				"-c", command})...)
 	} else {
-		cmd = exec.Command("/proc/self/exe", append([]string{"container", "run", "fork", "-c"}, command)...)
+		cmd = exec.Command("/proc/self/exe",
+			append([]string{"container", "run", "fork",
+				"-i", image,
+				"-c", command})...)
 	}
 	cmd.SysProcAttr = &unix.SysProcAttr{
 		Cloneflags: unix.CLONE_NEWUTS |

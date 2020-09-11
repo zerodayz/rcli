@@ -10,6 +10,7 @@ import (
 
 var (
 	containerCommand string
+	image 			 string
 )
 
 func init() {
@@ -18,11 +19,16 @@ func init() {
 
 	ContainerCmd.AddCommand(runContainerCmd)
 	runContainerCmd.Flags().StringVarP(&containerCommand, "command", "c", "", "command")
+	runContainerCmd.Flags().StringVarP(&image, "image", "i", "", "rootfs directory")
 	runContainerCmd.MarkFlagRequired("containerCommand")
+	runContainerCmd.MarkFlagRequired("image")
+
 
 	runContainerCmd.AddCommand(forkCmd)
 	forkCmd.Flags().StringVarP(&containerCommand, "command", "c", "", "command")
+	forkCmd.Flags().StringVarP(&image, "image", "i", "", "rootfs directory")
 	forkCmd.MarkFlagRequired("containerCommand")
+	forkCmd.MarkFlagRequired("image")
 }
 
 var ContainerCmd = &cobra.Command{
@@ -42,7 +48,7 @@ var runContainerCmd = &cobra.Command{
 	Long:  `execute command in container`,
 	Run: func(cmd *cobra.Command, args []string) {
 		ShowLogo()
-		containers.Run(containerCommand)
+		containers.Run(containerCommand, image)
 	},
 }
 
@@ -53,7 +59,7 @@ var forkCmd = &cobra.Command{
 	Long:  `execute command in container`,
 	Run: func(cmd *cobra.Command, args []string) {
 		start := time.Now()
-		containers.Child(containerCommand)
+		containers.Child(containerCommand, image)
 		end := time.Now()
 		log.Println(end.Sub(start))
 	},
