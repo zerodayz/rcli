@@ -292,6 +292,7 @@ PID   USER     TIME  COMMAND
 [root@container]# ip a
 1: lo: <LOOPBACK> mtu 65536 qdisc noop state DOWN qlen 1000
     link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+[root@container]#
 ```
 <a id="markdown-contact" name="contact-us"></a>
 ## Contact us!
