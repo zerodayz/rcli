@@ -10,43 +10,81 @@ import (
 	"os/exec"
 	"strings"
 	"syscall"
+	"io/ioutil"
+	"path/filepath"
 )
 
-func SetUpNS(rootfs string) {
-	_, err := os.Stat(rootfs)
+func SetUpNS(rootPath string) {
+	if vars.Debug == true {
+		log.Printf("DEBUG: checking rootfs directory: %s.\n", rootPath)
+	}
+	_, err := os.Stat(rootPath)
 	if os.IsNotExist(err) {
-		log.Fatal("ERROR: rootfs directory doesn't exist.")
+		log.Fatalf("ERROR: root directory doesn't exist: %v\n", err)
+	}
+	pivotRoot, err := ioutil.TempDir(rootPath, ".pivot_root")
+	if err != nil {
+		log.Printf("ERROR: setting up pivot dir: %v\n", err)
+		os.Exit(1)
+	}
+	if vars.Debug == true {
+		log.Printf("DEBUG: setting up pivot_root directory: %s.\n", pivotRoot)
+	}
+	if vars.Debug == true {
+		log.Printf("DEBUG: setting hostname in the container.\n")
 	}
 	if err := unix.Sethostname([]byte("container")); err != nil {
-		log.Println("ERROR: failed to set hostname.")
+		log.Printf("ERROR: failed to set hostname: %v\n", err)
 		os.Exit(1)
 	}
-	if err := unix.Mount("proc", rootfs + "/proc", "proc", 0, ""); err != nil {
-		log.Println("ERROR: failed to mount proc.")
+	if vars.Debug == true {
+		log.Printf("DEBUG: mounting proc onto %sproc.\n", rootPath)
+	}
+	if err := unix.Mount("proc", filepath.Join(rootPath, "/proc"), "proc", 0, ""); err != nil {
+		log.Printf("ERROR: failed to mount proc: %v\n", err)
 		os.Exit(1)
 	}
-	if err := unix.Mount(rootfs, rootfs, "", unix.MS_BIND|unix.MS_REC, ""); err != nil {
-		log.Println("ERROR: failed to mount rootfs.")
+	if vars.Debug == true {
+		log.Printf("DEBUG: bind mounting root onto itself (workaround for pivot_root).\n")
+	}
+	if err := unix.Mount(rootPath, rootPath, "", unix.MS_BIND|unix.MS_REC, ""); err != nil {
+		log.Printf("ERROR: failed to mount root: %v\n", err)
 		os.Exit(1)
 	}
-	if err := os.MkdirAll(rootfs + "/.old_root", 0700); err != nil {
-		log.Println("ERROR: failed to create .old_root directory.")
+	if vars.Debug == true {
+		log.Printf("DEBUG: creating new pivot directory: %s.\n", pivotRoot)
+	}
+	if err := os.MkdirAll(pivotRoot, 0700); err != nil {
+		log.Printf("ERROR: failed to create pivot_root: %v\n", err)
 		os.Exit(1)
 	}
-	if err := unix.PivotRoot(rootfs, rootfs + "/.old_root"); err != nil {
-		log.Println("ERROR: failed to pivot to new root.")
+	if vars.Debug == true {
+		log.Printf("DEBUG: executing pivot_root %s %s.\n", rootPath, pivotRoot)
+	}
+	if err := unix.PivotRoot(rootPath, pivotRoot); err != nil {
+		log.Printf("ERROR: failed to pivot to new root: %v\n", err)
 		os.Exit(1)
+	}
+	pivotRoot = filepath.Join("/", filepath.Base(pivotRoot))
+	if vars.Debug == true {
+		log.Printf("DEBUG: changing directory to /.\n")
 	}
 	if err := unix.Chdir("/"); err != nil {
-		log.Println("ERROR: failed to change dir to /.")
+		log.Printf("ERROR: failed to change dir to /: %v\n", err)
 		os.Exit(1)
 	}
-	if err := unix.Unmount("/.old_root", unix.MNT_DETACH); err != nil {
-		log.Println("ERROR: failed to unmount .old_root.")
+	if vars.Debug == true {
+		log.Printf("DEBUG: unmounting pivot_root directory: %s.\n", pivotRoot)
+	}
+	if err := unix.Unmount(pivotRoot, unix.MNT_DETACH); err != nil {
+		log.Printf("ERROR: failed to unmount %s: %v\n", pivotRoot, err)
 		os.Exit(1)
 	}
-	if err := os.RemoveAll("/.old_root"); err != nil {
-		log.Println("ERROR: failed to remove .old_root")
+	if vars.Debug == true {
+		log.Printf("DEBUG: removing pivot_root directory: %s.\n", pivotRoot)
+	}
+	if err := os.RemoveAll(pivotRoot); err != nil {
+		log.Printf("ERROR: failed to remove %s: %v\n", pivotRoot, err)
 		os.Exit(1)
 	}
 }
@@ -57,15 +95,20 @@ func Child(command, rootfs string) {
 
 	commandArgs := strings.Split(command, " ")
 	if vars.Debug == true {
-		log.Printf("DEBUG: Executing command %v in container.\n", commandArgs)
+		log.Printf("DEBUG: executing command %v in container.\n", commandArgs)
 	}
 	if len(commandArgs) == 1 {
 		cmd = exec.Command(commandArgs[0])
 	} else {
 		cmd = exec.Command(commandArgs[0], commandArgs[1:]...)
 	}
+	if vars.Debug == true {
+		log.Printf("DEBUG: setting up extra PATH=/bin:/sbin inside new namespace.\n")
+	}
 	cmd.Env = []string{"PATH=/bin:/sbin",`PS1=[\u@\h]\$ `}
-
+	if vars.Debug == true {
+		log.Printf("DEBUG: mapping stdin, stdout and stderr.\n")
+	}
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
@@ -80,6 +123,7 @@ func Child(command, rootfs string) {
 func Run(command, image string) {
 	var cmd *exec.Cmd
 	if vars.Debug == true {
+		log.Printf("DEBUG: executing command: /proc/self/exe container -d run fork -i %s -c %s\n", image, command)
 		cmd = exec.Command("/proc/self/exe",
 			append([]string{"container", "-d", "run", "fork",
 				"-i", image,
