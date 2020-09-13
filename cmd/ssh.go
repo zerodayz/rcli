@@ -33,8 +33,8 @@ func init() {
 	sshCmd.MarkFlagRequired("username")
 
 	sshCmd.AddCommand(runSshCmd)
-	runSshCmd.Flags().StringVarP(&command, "containerCommand", "c", "", "containerCommand")
-	runSshCmd.MarkFlagRequired("containerCommand")
+	runSshCmd.Flags().StringVarP(&command, "command", "c", "", "command")
+	runSshCmd.MarkFlagRequired("command")
 
 	sshCmd.AddCommand(cpSshCmd)
 	cpSshCmd.Flags().StringVarP(&src, "source", "", "", "source file or directory")
