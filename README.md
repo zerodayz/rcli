@@ -39,17 +39,17 @@ Example of hosts file:
 ```
 `--hosts-file`
 ```
-rcli ssh -U root --hosts-file hosts -d run -c "id"
+$ rcli ssh -U root --hosts-file hosts --debug run --command id
 ```
 or using `-H`
 ```
-rcli ssh -U root -H 192.168.1.N:22,192.168.1.N:22,192.168.1.N:22 -d run -c "id"
+$ rcli ssh -U root -H 192.168.1.N:22,192.168.1.N:22,192.168.1.N:22 --debug run --command id
 ```
 
 #### Example
 
 ```
-rcli ssh -U root --hosts-file hosts -d run -c "id"
+$ rcli ssh -U root --hosts-file hosts --debug run --command id
            ___________________ .____    .___
 Welcome to \______   \_   ___ \|    |   |   |
             |       _/    \  \/|    |   |   |
@@ -123,7 +123,7 @@ ssh: handshake failed: read tcp 192.168.1.N:50087->192.168.1.N:22: read: connect
 
 Same 1,000 hosts, this time running an example script. It takes roughly around 40 seconds to finish.
 ```
-rcli ssh -U root --hosts-file hosts runscript -f script-examples/for_loop.sh
+$ rcli ssh -U root --hosts-file hosts runscript --file script-examples/for_loop.sh
            ___________________ .____    .___
 Welcome to \______   \_   ___ \|    |   |   |
             |       _/    \  \/|    |   |   |
@@ -240,12 +240,14 @@ You will need `rootfs` directory, for example minimal alpine will do:
 - rootfs (http://dl-cdn.alpinelinux.org/alpine/v3.12/releases/x86_64/alpine-minirootfs-3.12.0-x86_64.tar.gz)
 #### Syntax
 ```
-rcli container run -c /bin/sh -i rootfs
+$ rcli container run --image ${IMAGE} -c ${COMMAND}
 ```
 
-#### Example
+#### Example Fedora 32 image
 ```
-rcli container run -c /bin/sh -i rootfs
+$ IMAGE="fedora"
+$ mkdir ${IMAGE} && podman export $(podman create ${IMAGE}) | tar -C ${IMAGE} -xvf -
+$ rcli container run --image ${IMAGE} -c /bin/bash
            ___________________ .____    .___
 Welcome to \______   \_   ___ \|    |   |   |
             |       _/    \  \/|    |   |   |
@@ -256,43 +258,31 @@ Welcome to \______   \_   ___ \|    |   |   |
 This software comes with ABSOLUTELY NO WARRANTY.
 Use at your own risk.
 
-[root@container]# hostname
-container
-[root@container]# ls -la
-total 2668
-drwxr-xr-x   19 root     root           268 Sep 11 08:23 .
-drwxr-xr-x   19 root     root           268 Sep 11 08:23 ..
--rw-rw-r--    1 root     root             0 Sep 11 05:10 ROOT_CONTAINERS
--rw-rw-r--    1 root     root       2716902 May 29 14:20 alpine-minirootfs-3.12.0-x86_64.tar.gz
-drwxr-xr-x    2 root     root          4096 May 29 14:20 bin
-drwxr-xr-x    2 root     root             6 May 29 14:20 dev
-drwxr-xr-x   15 root     root          4096 May 29 14:20 etc
-drwxr-xr-x    2 root     root             6 May 29 14:20 home
-drwxr-xr-x    7 root     root           223 May 29 14:20 lib
-drwxr-xr-x    5 root     root            44 May 29 14:20 media
-drwxr-xr-x    2 root     root             6 May 29 14:20 mnt
-drwxr-xr-x    2 root     root             6 May 29 14:20 opt
-dr-xr-xr-x  336 nobody   nobody           0 Sep 11 08:23 proc
-drwx------    2 root     root             6 May 29 14:20 root
-drwxr-xr-x    2 root     root             6 May 29 14:20 run
-drwxr-xr-x    2 root     root          4096 May 29 14:20 sbin
-drwxr-xr-x    2 root     root             6 May 29 14:20 srv
-drwxr-xr-x    2 root     root             6 May 29 14:20 sys
-drwxrwxr-x    2 root     root             6 May 29 14:20 tmp
-drwxr-xr-x    7 root     root            66 May 29 14:20 usr
-drwxr-xr-x   12 root     root           137 May 29 14:20 var
-[root@container]# mount
-/dev/sda2 on / type xfs (rw,seclabel,relatime,attr2,inode64,noquota)
-proc on /proc type proc (rw,relatime)
-[root@container]# ps -elf
-PID   USER     TIME  COMMAND
-    1 root      0:00 /proc/self/exe container run fork -c /bin/sh -i rootfs
-    6 root      0:00 /bin/sh
-   10 root      0:00 ps -elf
-[root@container]# ip a
-1: lo: <LOOPBACK> mtu 65536 qdisc noop state DOWN qlen 1000
-    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
-[root@container]#
+[root@fpllngzieyoh]# cat /etc/*release
+Fedora release 32 (Thirty Two)
+NAME=Fedora
+VERSION="32 (Container Image)"
+ID=fedora
+VERSION_ID=32
+VERSION_CODENAME=""
+PLATFORM_ID="platform:f32"
+PRETTY_NAME="Fedora 32 (Container Image)"
+ANSI_COLOR="0;34"
+LOGO=fedora-logo-icon
+CPE_NAME="cpe:/o:fedoraproject:fedora:32"
+HOME_URL="https://fedoraproject.org/"
+DOCUMENTATION_URL="https://docs.fedoraproject.org/en-US/fedora/f32/system-administrators-guide/"
+SUPPORT_URL="https://fedoraproject.org/wiki/Communicating_and_getting_help"
+BUG_REPORT_URL="https://bugzilla.redhat.com/"
+REDHAT_BUGZILLA_PRODUCT="Fedora"
+REDHAT_BUGZILLA_PRODUCT_VERSION=32
+REDHAT_SUPPORT_PRODUCT="Fedora"
+REDHAT_SUPPORT_PRODUCT_VERSION=32
+PRIVACY_POLICY_URL="https://fedoraproject.org/wiki/Legal:PrivacyPolicy"
+VARIANT="Container Image"
+VARIANT_ID=container
+Fedora release 32 (Thirty Two)
+Fedora release 32 (Thirty Two)
 ```
 <a id="markdown-contact" name="contact-us"></a>
 ## Contact us!
