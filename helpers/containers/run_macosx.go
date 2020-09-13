@@ -27,7 +27,7 @@ func NSGetExecutablePath() string {
 	return C.GoStringN(&buf[0], C.int(buflen))
 }
 
-func Child(command, image string) {
+func ChildRcli(command, image string) {
 	var cmd *exec.Cmd
 
 	commandArgs := strings.Split(command, " ")
@@ -50,7 +50,7 @@ func Child(command, image string) {
 	}
 }
 
-func Run(command, image string) {
+func RunRcli(command, image string) {
 	var cmd *exec.Cmd
 
 	Command := string(bytes.Trim([]byte(NSGetExecutablePath()), "\x00"))

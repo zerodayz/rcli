@@ -5,6 +5,7 @@ import (
 	"github.com/zerodayz/rcli/helpers/containers"
 	"github.com/zerodayz/rcli/vars"
 	"log"
+	"os"
 	"time"
 )
 
@@ -16,13 +17,13 @@ var (
 func init() {
 	rootCmd.AddCommand(ContainerCmd)
 	ContainerCmd.PersistentFlags().BoolVarP(&vars.Debug, "debug", "d", false, "enable debug")
+	ContainerCmd.PersistentFlags().StringVarP(&vars.ContainerRuntime, "runtime", "r", "rcli", "container runtime")
 
 	ContainerCmd.AddCommand(runContainerCmd)
 	runContainerCmd.Flags().StringVarP(&containerCommand, "command", "c", "", "command")
 	runContainerCmd.Flags().StringVarP(&image, "image", "i", "", "rootfs directory")
 	runContainerCmd.MarkFlagRequired("containerCommand")
 	runContainerCmd.MarkFlagRequired("image")
-
 
 	runContainerCmd.AddCommand(forkCmd)
 	forkCmd.Flags().StringVarP(&containerCommand, "command", "c", "", "command")
@@ -48,7 +49,17 @@ var runContainerCmd = &cobra.Command{
 	Long:  `execute command in container`,
 	Run: func(cmd *cobra.Command, args []string) {
 		ShowLogo()
-		containers.Run(containerCommand, image)
+		if vars.ContainerRuntime == "rcli" {
+			if vars.Debug == true {
+				log.Printf("DEBUG: executing container runtime: %s.\n", vars.ContainerRuntime)
+			}
+			containers.RunRcli(containerCommand, image)
+		} else {
+			if vars.Debug == true {
+				log.Printf("DEBUG: container runtime %s not supported.\n", vars.ContainerRuntime)
+				os.Exit(1)
+			}
+		}
 	},
 }
 
@@ -59,7 +70,7 @@ var forkCmd = &cobra.Command{
 	Long:  `execute command in container`,
 	Run: func(cmd *cobra.Command, args []string) {
 		start := time.Now()
-		containers.Child(containerCommand, image)
+		containers.ChildRcli(containerCommand, image)
 		end := time.Now()
 		log.Println(end.Sub(start))
 	},
