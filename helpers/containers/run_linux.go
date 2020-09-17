@@ -3,13 +3,13 @@
 package containers
 
 import (
+	"bytes"
+	"fmt"
 	"github.com/zerodayz/rcli/vars"
 	"golang.org/x/sys/unix"
 	"io/ioutil"
-	"math/rand"
-	"bytes"
 	"log"
-	"fmt"
+	"math/rand"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -140,7 +140,7 @@ func ChildRcli(command, rootfs string) {
 	if vars.Debug == true {
 		log.Printf("DEBUG: setting up extra PATH=/bin:/sbin inside new namespace.\n")
 	}
-	cmd.Env = []string{"PATH=/bin:/sbin",`PS1=[\u@\h]\$ `}
+	cmd.Env = []string{"PATH=/bin:/sbin", `PS1=[\u@\h]\$ `}
 	if vars.Debug == true {
 		log.Printf("DEBUG: mapping stdin, stdout and stderr.\n")
 	}
@@ -171,17 +171,17 @@ func RunRcli(command, image string) {
 	}
 	cmd.SysProcAttr = &unix.SysProcAttr{
 		Cloneflags: unix.CLONE_NEWUTS |
-					unix.CLONE_NEWPID |
-					unix.CLONE_NEWNS  |
-					unix.CLONE_NEWIPC |
-					// Make sure you have enabled user_namespaces:
-					// sudo su -c 'echo "user.max_user_namespaces=15064" > /etc/sysctl.d/00-namespaces.conf'
-					// sudo sysctl --system
-					unix.CLONE_NEWUSER |
-					// To enable ping from net namespace
-					// sudo sh -c 'echo "net.ipv4.ping_group_range=0   2147483647" > /etc/sysctl.d/ping_group_range.conf'
-					// sudo sysctl --system
-					unix.CLONE_NEWNET,
+			unix.CLONE_NEWPID |
+			unix.CLONE_NEWNS |
+			unix.CLONE_NEWIPC |
+			// Make sure you have enabled user_namespaces:
+			// sudo su -c 'echo "user.max_user_namespaces=15064" > /etc/sysctl.d/00-namespaces.conf'
+			// sudo sysctl --system
+			unix.CLONE_NEWUSER |
+			// To enable ping from net namespace
+			// sudo sh -c 'echo "net.ipv4.ping_group_range=0   2147483647" > /etc/sysctl.d/ping_group_range.conf'
+			// sudo sysctl --system
+			unix.CLONE_NEWNET,
 		Unshareflags: unix.CLONE_NEWNS,
 		UidMappings: []syscall.SysProcIDMap{
 			{

@@ -12,20 +12,20 @@ import (
 )
 
 var (
-	hosts		[]string
-	username 	string
-	command 	string
-	filename 	string
-	hostsFile	string
-	hostsCli 	[]string
-	src			string
-	dst			string
-	debug		bool
+	hosts     []string
+	username  string
+	command   string
+	filename  string
+	hostsFile string
+	hostsCli  []string
+	src       string
+	dst       string
+	debug     bool
 )
 
 func init() {
 	rootCmd.AddCommand(sshCmd)
-	sshCmd.PersistentFlags().StringSliceVarP(&hostsCli, "hosts", "H", []string{""}, "hosts" + "\nFor example 192.168.1.10:22,192.168.1.12:22")
+	sshCmd.PersistentFlags().StringSliceVarP(&hostsCli, "hosts", "H", []string{""}, "hosts"+"\nFor example 192.168.1.10:22,192.168.1.12:22")
 	sshCmd.PersistentFlags().StringVarP(&username, "username", "U", "", "username")
 	sshCmd.PersistentFlags().StringVar(&hostsFile, "hosts-file", "", "hosts file")
 	sshCmd.PersistentFlags().BoolVarP(&vars.Debug, "debug", "d", false, "enable debug")
@@ -36,6 +36,7 @@ func init() {
 	runSshCmd.Flags().StringVarP(&command, "command", "c", "", "command")
 	runSshCmd.MarkFlagRequired("command")
 
+	// TODO
 	sshCmd.AddCommand(cpSshCmd)
 	cpSshCmd.Flags().StringVarP(&src, "source", "", "", "source file or directory")
 	cpSshCmd.Flags().StringVarP(&dst, "destination", "", "", "destination")
@@ -46,7 +47,6 @@ func init() {
 	runscriptSshCmd.Flags().StringVarP(&filename, "filename", "f", "", "filename")
 	runscriptSshCmd.MarkFlagRequired("filename")
 }
-
 
 var sshCmd = &cobra.Command{
 	Use:   "ssh",
@@ -83,7 +83,7 @@ var runSshCmd = &cobra.Command{
 			}
 		}
 		c := &ssh.Connection{Username: username,
-							 Hosts: hosts}
+			Hosts: hosts}
 		config := ssh.InitializeSshAgent(&c.Username)
 		ssh.Parallel(ssh.RunCommand, command, c.Hosts, config)
 
@@ -92,6 +92,7 @@ var runSshCmd = &cobra.Command{
 	},
 }
 
+// TODO
 var cpSshCmd = &cobra.Command{
 	Use:   "cp",
 	Short: "copy file or directory over ssh",

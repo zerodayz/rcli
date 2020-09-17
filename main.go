@@ -9,6 +9,7 @@ import (
 func main() {
 	cmd.Execute()
 }
+
 //
 //func main() {
 //	if vars.Debug == true {

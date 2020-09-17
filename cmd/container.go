@@ -11,7 +11,7 @@ import (
 
 var (
 	containerCommand string
-	image 			 string
+	image            string
 )
 
 func init() {
@@ -64,10 +64,10 @@ var runContainerCmd = &cobra.Command{
 }
 
 var forkCmd = &cobra.Command{
-	Use:   "fork",
+	Use:    "fork",
 	Hidden: true,
-	Short: "execute command in container",
-	Long:  `execute command in container`,
+	Short:  "execute command in container",
+	Long:   `execute command in container`,
 	Run: func(cmd *cobra.Command, args []string) {
 		start := time.Now()
 		containers.ChildRcli(containerCommand, image)

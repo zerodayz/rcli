@@ -69,4 +69,3 @@ func RunRcli(command, image string) {
 		os.Exit(1)
 	}
 }
-

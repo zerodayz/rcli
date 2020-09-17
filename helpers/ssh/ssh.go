@@ -39,7 +39,7 @@ func CpCommand(scriptPath, host string, config *ssh.ClientConfig) (string, strin
 	sshConnection, err := ssh.Dial("tcp", host, config)
 	if err != nil {
 		stdOutput := bytes.NewBuffer(nil)
-		stdOutput.Write([]byte(colors.Cyan + " --- " + host + " ---" + colors.Reset +"\n"))
+		stdOutput.Write([]byte(colors.Cyan + " --- " + host + " ---" + colors.Reset + "\n"))
 		stdOutput.Write([]byte(colors.Green + " Output:" + colors.Reset + "\n"))
 
 		stdError := bytes.NewBuffer(nil)
@@ -79,7 +79,7 @@ func CpCommand(scriptPath, host string, config *ssh.ClientConfig) (string, strin
 	sshSession.Stdin = scriptContent
 
 	stdOutput := bytes.NewBuffer(nil)
-	stdOutput.Write([]byte(colors.Cyan + " --- " + host + " ---" + colors.Reset +"\n"))
+	stdOutput.Write([]byte(colors.Cyan + " --- " + host + " ---" + colors.Reset + "\n"))
 	stdOutput.Write([]byte(colors.Green + " Output:" + colors.Reset + "\n"))
 
 	stdError := bytes.NewBuffer(nil)
@@ -98,7 +98,6 @@ func CpCommand(scriptPath, host string, config *ssh.ClientConfig) (string, strin
 		defer wg2.Done()
 		io.Copy(stdError, sessionStderr)
 	}()
-
 
 	sshSession.Shell()
 	sshSession.Wait()
@@ -117,7 +116,7 @@ func RunScriptCommand(scriptPath, host string, config *ssh.ClientConfig) (string
 	sshConnection, err := ssh.Dial("tcp", host, config)
 	if err != nil {
 		stdOutput := bytes.NewBuffer(nil)
-		stdOutput.Write([]byte(colors.Cyan + " --- " + host + " ---" + colors.Reset +"\n"))
+		stdOutput.Write([]byte(colors.Cyan + " --- " + host + " ---" + colors.Reset + "\n"))
 		stdOutput.Write([]byte(colors.Green + " Output:" + colors.Reset + "\n"))
 
 		stdError := bytes.NewBuffer(nil)
@@ -157,7 +156,7 @@ func RunScriptCommand(scriptPath, host string, config *ssh.ClientConfig) (string
 	sshSession.Stdin = scriptContent
 
 	stdOutput := bytes.NewBuffer(nil)
-	stdOutput.Write([]byte(colors.Cyan + " --- " + host + " ---" + colors.Reset +"\n"))
+	stdOutput.Write([]byte(colors.Cyan + " --- " + host + " ---" + colors.Reset + "\n"))
 	stdOutput.Write([]byte(colors.Green + " Output:" + colors.Reset + "\n"))
 
 	stdError := bytes.NewBuffer(nil)
@@ -177,7 +176,6 @@ func RunScriptCommand(scriptPath, host string, config *ssh.ClientConfig) (string
 		io.Copy(stdError, sessionStderr)
 	}()
 
-
 	sshSession.Shell()
 	sshSession.Wait()
 	wg2.Wait()
@@ -195,7 +193,7 @@ func RunCommand(cmd, host string, config *ssh.ClientConfig) (string, string) {
 	sshConnection, err := ssh.Dial("tcp", host, config)
 	if err != nil {
 		stdOutput := bytes.NewBuffer(nil)
-		stdOutput.Write([]byte(colors.Cyan + " --- " + host + " ---" + colors.Reset +"\n"))
+		stdOutput.Write([]byte(colors.Cyan + " --- " + host + " ---" + colors.Reset + "\n"))
 		stdOutput.Write([]byte(colors.Green + " Output:" + colors.Reset + "\n"))
 
 		stdError := bytes.NewBuffer(nil)
@@ -218,7 +216,7 @@ func RunCommand(cmd, host string, config *ssh.ClientConfig) (string, string) {
 	}
 
 	stdOutput := bytes.NewBuffer(nil)
-	stdOutput.Write([]byte(colors.Cyan + " --- " + host + " ---" + colors.Reset +"\n"))
+	stdOutput.Write([]byte(colors.Cyan + " --- " + host + " ---" + colors.Reset + "\n"))
 	stdOutput.Write([]byte(colors.Green + " Output:" + colors.Reset + "\n"))
 
 	stdError := bytes.NewBuffer(nil)

@@ -9,7 +9,7 @@ import (
 var rootCmd = &cobra.Command{
 	Use:   "rcli",
 	Short: "rcli multipurpose CLI",
-	Long: `Project documentation is available at http://github.com/zerodayz/rcli`,
+	Long:  `Project documentation is available at http://github.com/zerodayz/rcli`,
 	Run: func(cmd *cobra.Command, args []string) {
 	},
 }
@@ -20,11 +20,11 @@ func ShowLogo() {
 	fmt.Println(`            |       _/    \  \/|    |   |   |`)
 	fmt.Println(`            |    |   \     \___|    |___|   |`)
 	fmt.Println(`            |____|_  /\______  /_______ \___|`)
-	fmt.Println( `                  \/        \/        \/   `)
-	fmt.Println( ``)
-	fmt.Println( `This software comes with ABSOLUTELY NO WARRANTY.`)
-	fmt.Println( `Use at your own risk.`)
-	fmt.Println( ``)
+	fmt.Println(`                  \/        \/        \/   `)
+	fmt.Println(``)
+	fmt.Println(`This software comes with ABSOLUTELY NO WARRANTY.`)
+	fmt.Println(`Use at your own risk.`)
+	fmt.Println(``)
 }
 
 func Execute() {
