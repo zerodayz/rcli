@@ -74,7 +74,7 @@ var runSshCmd = &cobra.Command{
 				os.Exit(1)
 			}
 		}
-		if len(hostsCli) > 1 {
+		if len(hostsCli) > 0 {
 			for _, host := range hostsCli {
 				if !strings.Contains(host, ":") {
 					host += fmt.Sprintf(":%d", vars.SSHDefaultPort)
@@ -121,7 +121,7 @@ var runscriptSshCmd = &cobra.Command{
 				os.Exit(1)
 			}
 		}
-		if len(hostsCli) > 1 {
+		if len(hostsCli) > 0 {
 			for _, host := range hostsCli {
 				if !strings.Contains(host, ":") {
 					host += fmt.Sprintf(":%d", vars.SSHDefaultPort)
@@ -131,6 +131,9 @@ var runscriptSshCmd = &cobra.Command{
 		}
 		c := &ssh.Connection{Username: username,
 			Hosts: hosts}
+		if vars.Debug == true {
+			log.Printf("DEBUG: executing rcli on: %s\n", c.Hosts)
+		}
 		config := ssh.InitializeSshAgent(&c.Username)
 		ssh.Parallel(ssh.RunScriptCommand, filename, c.Hosts, config)
 
