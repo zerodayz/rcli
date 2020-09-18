@@ -1,5 +1,7 @@
-# RCLI - multipurpose CLI
-Prototype of an multipurpose tool written in Go
+[![Go Report Card](https://goreportcard.com/badge/github.com/zerodayz/rcli)](https://goreportcard.com/report/github.com/zerodayz/rcli)
+
+# rcli - Multipurpose CLI
+This is multipurpose tool written in Go. It can now `ssh` to thousands of hosts in around 40 seconds. It can start container without `docker` or `podman` purely using Linux namespaces. I am adding more [features](#features) as I can think of them.
 
 **Table of contents**
 <!-- TOC depthFrom:1 insertAnchor:true orderedList:true -->
