@@ -10,7 +10,6 @@ This is multipurpose tool written in Go. It can now `ssh` to thousands of hosts 
 - [Releases](#releases)
 - [Features](#features)
   - [ssh](#ssh)
-  - [container](#container)
 - [Contact us!](#contact-us)
 
 <!-- /TOC -->
