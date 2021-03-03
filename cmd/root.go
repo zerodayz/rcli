@@ -11,6 +11,10 @@ var rootCmd = &cobra.Command{
 	Short: "rcli multipurpose CLI",
 	Long:  `Project documentation is available at http://github.com/zerodayz/rcli`,
 	Run: func(cmd *cobra.Command, args []string) {
+		if len(args) == 0 {
+			_ = cmd.Help()
+			os.Exit(0)
+		}
 	},
 }
 

@@ -1,11 +1,11 @@
 package vars
 
 var Debug bool
-var ContainerRuntime = ""
+var Silent bool
 var SSHDefaultPort = 0
 
 func init() {
 	Debug = false
-	ContainerRuntime = "rcli"
+	Silent = false
 	SSHDefaultPort = 22
 }
